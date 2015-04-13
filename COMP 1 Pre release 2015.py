@@ -19,6 +19,28 @@ def DisplayWhoseTurnItIs(WhoseTurn):
   else:
     print("It is Black's turn")
 
+def DisplayMenu():
+    print("Main Menu")
+    print()
+    print("1. Start new game")
+    print("2. Load existing game")
+    print("3. Play sample game")
+    print("4. View high scores")
+    print("5. Settings")
+    print("6. Quit program")
+    print()
+
+def GetMenuSelection():
+    Choice = input("Select an option from the menu(q to quit): ")
+    print()
+    return Choice
+
+def MakeSelection(Choice):
+    while Choice != "q" or Choice != "Q" or Choice != "Quit" or Choice != "quit":
+      if Choice == "1":
+        
+    
+
 def GetTypeOfGame():
     valid = False
     while not valid:
@@ -157,7 +179,7 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
   return MoveIsLegal
 
 def InitialiseBoard(Board, SampleGame):
-  if SampleGame == "Y":
+  if SampleGame == "Y" or SampleGame == "y" or SampleGame == "Yes" or SampleGame == "yes":
     for RankNo in range(1, BOARDDIMENSION + 1):
       for FileNo in range(1, BOARDDIMENSION + 1):
         Board[RankNo][FileNo] = "  "
@@ -261,6 +283,8 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     Board[StartRank][StartFile] = "  "
     
 if __name__ == "__main__":
+  DisplayMenu()
+  Choice = GetMenuSelection()
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
