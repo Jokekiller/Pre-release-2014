@@ -31,15 +31,27 @@ def DisplayMenu():
     print()
 
 def GetMenuSelection():
-    Choice = input("Select an option from the menu(q to quit): ")
+    Choice = int(input("Select an option from the menu: "))
     print()
     return Choice
 
 def MakeSelection(Choice):
-    while Choice != "q" or Choice != "Q" or Choice != "Quit" or Choice != "quit":
-      if Choice == "1":
-        
-    
+    if Choice == 1:
+      pass
+    elif Choice == 2:
+      pass
+    elif Choice == 3:
+      pass
+    elif Choice == 4:
+      pass
+    elif Choice == 5:
+      pass
+    elif Choice == 6:
+      pass
+
+def PlayGame(Choice):
+    if Choice == 1:
+      
 
 def GetTypeOfGame():
     valid = False
