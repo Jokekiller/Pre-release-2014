@@ -43,11 +43,11 @@ def GetMenuSelection():
 
 def MakeSelection(Choice):
     if Choice == 1:
-      return Choice
+      PlayGame('N')
     elif Choice == 2:
       pass
     elif Choice == 3:
-      pass
+      PlayGame('Y')
     elif Choice == 4:
       pass
     elif Choice == 5:
@@ -55,7 +55,7 @@ def MakeSelection(Choice):
     elif Choice == 6:
       pass
 
-def PlayGame(Choice):
+def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
@@ -64,7 +64,7 @@ def PlayGame(Choice):
     WhoseTurn = "W"
     GameOver = False
     #SampleGame = GetTypeOfGame()
-    InitialiseBoard(Board)
+    InitialiseBoard(Board, SampleGame)
     while not(GameOver):
       DisplayBoard(Board)
       DisplayWhoseTurnItIs(WhoseTurn)
@@ -120,7 +120,7 @@ def DisplayBoard(Board):
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
     print("      ________________________")
-    print("R",RankNo, end="   ")
+    print("R{0}".format(RankNo), end="   ")
     for FileNo in range(1, BOARDDIMENSION + 1):
       print("|" + Board[RankNo][FileNo], end="")
     print("|")
@@ -231,11 +231,11 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
         MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
-def PlaySampleGame():
-  #SampleGame == "Y" or SampleGame == "y" or SampleGame == "Yes" or SampleGame == "yes":
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):
-        Board[RankNo][FileNo] = "  "
+def InitialiseBoard(Board, SampleGame):
+    if SampleGame == "Y" or SampleGame == "y" or SampleGame == "Yes" or SampleGame == "yes":
+      for RankNo in range(1, BOARDDIMENSION + 1):
+        for FileNo in range(1, BOARDDIMENSION + 1):
+          Board[RankNo][FileNo] = "  "
       Board[1][2] = "BG"
       Board[1][4] = "BS"
       Board[1][8] = "WG"
@@ -244,32 +244,31 @@ def PlaySampleGame():
       Board[3][2] = "BE"
       Board[3][8] = "BE"
       Board[6][8] = "BR"
+    else:
+      for RankNo in range(1, BOARDDIMENSION + 1):
+        for FileNo in range(1, BOARDDIMENSION + 1):
+          if RankNo == 2:
+            Board[RankNo][FileNo] = "BR"
+          elif RankNo == 7:
+            Board[RankNo][FileNo] = "WR"
+          elif RankNo == 1 or RankNo == 8:
+            if RankNo == 1:
+              Board[RankNo][FileNo] = "B"
+            if RankNo == 8:
+              Board[RankNo][FileNo] = "W"
+            if FileNo == 1 or FileNo == 8:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
+            elif FileNo == 2 or FileNo == 7:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
+            elif FileNo == 3 or FileNo == 6:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
+            elif FileNo == 4:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+            elif FileNo == 5:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+          else:
+            Board[RankNo][FileNo] = "  "  
 
-def InitialiseBoard(Board):
-  for RankNo in range(1, BOARDDIMENSION + 1):
-    for FileNo in range(1, BOARDDIMENSION + 1):
-      if RankNo == 2:
-        Board[RankNo][FileNo] = "BR"
-      elif RankNo == 7:
-        Board[RankNo][FileNo] = "WR"
-      elif RankNo == 1 or RankNo == 8:
-        if RankNo == 1:
-          Board[RankNo][FileNo] = "B"
-        if RankNo == 8:
-          Board[RankNo][FileNo] = "W"
-        if FileNo == 1 or FileNo == 8:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
-        elif FileNo == 2 or FileNo == 7:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
-        elif FileNo == 3 or FileNo == 6:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
-        elif FileNo == 4:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
-        elif FileNo == 5:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
-      else:
-        Board[RankNo][FileNo] = "  "    
-                    
 def GetMove(StartSquare, FinishSquare):
   valid = False
   while not valid:
@@ -340,6 +339,6 @@ if __name__ == "__main__":
   DisplayMenu()
   Choice = GetMenuSelection()
   Choice = MakeSelection(Choice)
-  if Choice == 1 or Choice == 2:
-    PlayGame(Choice)
+  if Choice == 1 or Choice == 3:
+    PlayGame(SampleGame)
   
