@@ -34,12 +34,16 @@ def DisplayMenu():
 def GetMenuSelection():
     valid = False
     while not valid:
-      Choice = int(input("Select an option from the menu: "))
-      print()
-      if not Choice in [1,2,3,4,5,6]:
-        valid = False
-      else:
-        valid = True
+      try:
+        Choice = int(input("Select an option from the menu: "))
+        print()
+        if not Choice in range(6):
+          valid = False
+          print("Enter a valid number")
+        else:
+          valid = True
+      except ValueError:
+        print("Enter a valid number")
     return Choice
 
 def MakeSelection(Choice):
@@ -77,7 +81,7 @@ def PlayGame(SampleGame):
           OptionsMenu()
           OptionsChoice = OptionsSelection()
           MakeOptionSelection(OptionsChoice, WhoseTurn)
-          return
+          #Look at notes and refactor bottom part of the Gameover thing if game quit is = to no or yes
         confirm = ConfirmMove(StartSquare, FinishSquare)
         if confirm == "No" or confirm == "N" or confirm == "no" or confirm == "n":
           StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
@@ -122,12 +126,14 @@ def OptionsSelection():
 
 def MakeOptionSelection(OptionChoice, WhoseTurn):
   surrender = False
+  GameQuit = False
   if OptionChoice == 1:
      pass
      #with open("SarrumGame.dat", mode= "rb") as binary_file:
      # pickle.dump(Board, binary_file)
   elif OptionChoice == 2:
-    pass
+    Gameover = True
+    GameQuit = True
   elif OptionChoice == 3:
     pass
   elif OptionChoice == 4:
@@ -138,7 +144,8 @@ def MakeOptionSelection(OptionChoice, WhoseTurn):
     if WhoseTurn == "W":
       print("White surrendered, Black Wins!")
     elif WhoseTurn == "B":
-      print("Blacl surrendered, White Wins!")
+      print("Black surrendered, White Wins!")
+  return surrender, GameQuit
   
     
 def GetTypeOfGame():
@@ -310,7 +317,6 @@ def InitialiseNewBoard(Board):
         Board[RankNo][FileNo] = "  "
 
 def InitialiseSampleBoard(Board):
-    #if SampleGame == "Y" or SampleGame == "y" or SampleGame == "Yes" or SampleGame == "yes":
     for RankNo in range(1, BOARDDIMENSION + 1):
       for FileNo in range(1, BOARDDIMENSION + 1):
         Board[RankNo][FileNo] = "  "
