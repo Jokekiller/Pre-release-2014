@@ -80,18 +80,19 @@ def PlayGame(SampleGame):
         if ShowOptions:
           OptionsMenu()
           OptionsChoice = OptionsSelection()
-          MakeOptionSelection(OptionsChoice, WhoseTurn)
+          GameOver, GameQuit = MakeOptionSelection(OptionsChoice, WhoseTurn)
           #Look at notes and refactor bottom part of the Gameover thing if game quit is = to no or yes
-        confirm = ConfirmMove(StartSquare, FinishSquare)
-        if confirm == "No" or confirm == "N" or confirm == "no" or confirm == "n":
-          StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-        StartRank = StartSquare % 10
-        StartFile = StartSquare // 10
-        FinishRank = FinishSquare % 10
-        FinishFile = FinishSquare // 10
-        MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-        if not(MoveIsLegal):
-          print("That is not a legal move - please try again")
+        elif ShowOptions:
+          confirm = ConfirmMove(StartSquare, FinishSquare)
+          if confirm == "No" or confirm == "N" or confirm == "no" or confirm == "n":
+            StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+            StartRank = StartSquare % 10
+            StartFile = StartSquare // 10
+            FinishRank = FinishSquare % 10
+            FinishFile = FinishSquare // 10
+            MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+            if not(MoveIsLegal):
+              print("That is not a legal move - please try again")
       GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
       MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
       if GameOver:
@@ -132,7 +133,7 @@ def MakeOptionSelection(OptionChoice, WhoseTurn):
      #with open("SarrumGame.dat", mode= "rb") as binary_file:
      # pickle.dump(Board, binary_file)
   elif OptionChoice == 2:
-    Gameover = True
+    GameOver = True
     GameQuit = True
   elif OptionChoice == 3:
     pass
@@ -360,7 +361,9 @@ def GetMove(StartSquare, FinishSquare):
 def ConfirmMove(StartSquare, FinishSquare):
   StartSquare = str(StartSquare)
   FinishSquare = str(FinishSquare)
-  print("Move from rank {0}, File {1} to Rank {2}, File {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
+  print(StartSquare)
+  print(FinishSquare)
+  #print("Move from rank {0}, File {1} to Rank {2}, File {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
   confirm = input("Confirm move (Yes/No): ")
   return confirm
 
