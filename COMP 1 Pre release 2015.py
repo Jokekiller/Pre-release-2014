@@ -66,6 +66,7 @@ def PlayGame(SampleGame):
   FinishSquare = 0
   PlayAgain = "Y"
   ShowOptions = False
+  surrender = False
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
@@ -81,34 +82,33 @@ def PlayGame(SampleGame):
         if ShowOptions:
           OptionsMenu()
           OptionsChoice = OptionsSelection()
-          GameQuit, surrender = MakeOptionSelection(OptionsChoice, WhoseTurn)
+          surrender, GameQuit = MakeOptionSelection(OptionsChoice, WhoseTurn)
           MoveIsLegal = True
           GameOver = True
           PlayAgain = "N"
-        elif ShowOptions:
+        elif not ShowOptions:
           confirm = ConfirmMove(StartSquare, FinishSquare)
-          GameQuit = True
           if confirm == "No" or confirm == "N" or confirm == "no" or confirm == "n":
             StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-            StartRank = StartSquare % 10
-            StartFile = StartSquare // 10
-            FinishRank = FinishSquare % 10
-            FinishFile = FinishSquare // 10
+          StartRank = StartSquare % 10
+          StartFile = StartSquare // 10
+          FinishRank = FinishSquare % 10
+          FinishFile = FinishSquare // 10
           MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
           if not(MoveIsLegal):
             print("That is not a legal move - please try again")
-        if not GameQuit: 
-          GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-          MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-          if GameOver:
-            DisplayWinner(WhoseTurn)
-          if WhoseTurn == "W":
-            WhoseTurn = "B"
-          else:
-            WhoseTurn = "W"   
+          if not GameQuit and not surrender:
+            GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+            MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+            if GameOver:
+              DisplayWinner(WhoseTurn)
+            if WhoseTurn == "W":
+              WhoseTurn = "B"
+            else:
+              WhoseTurn = "W"   
         #PlayAgain = "N"
         if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-            PlayAgain = chr(ord(PlayAgain) - 32)
+          PlayAgain = chr(ord(PlayAgain) - 32)
       
 def OptionsMenu():
     print()
@@ -243,6 +243,27 @@ def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckNabuMoveIsLegal = False
   if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     CheckNabuMoveIsLegal = True
+    count = 0
+    if (FinishRank > StartRank and FinishFile > StartFile):
+      while count < ((FinishRank - StartRank) - 1):
+        count = count + 1
+        if Board[StartRank + count][StartFile + count] != "  ":
+          CheckNabuMoveIsLegal = False
+    elif (FinishRank > StartRank and FinishFile < StartFile):
+      while count < ((FinishRank - StartRank) - 1):
+        count = count + 1
+        if Board[StartRank + count][StartFile - count] != "  ":
+          CheckNabuMoveIsLegal = False
+    elif (FinishRank < StartRank and FinishFile < StartFile):
+      while count < ((StartRank - FinishRank) - 1):
+        count = count + 1
+        if Board[StartRank - count][StartFile - count] != "  ":
+          CheckNabuMoveIsLegal = False
+    elif (FinishRank < StartRank and FinishFile > StartFile):
+      while count < ((StartRank - FinishRank) - 1):
+        count = count + 1
+        if Board[StartRank - count][StartFile + count] != "  ":
+          CheckNabuMoveIsLegal = False
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -366,9 +387,7 @@ def GetMove(StartSquare, FinishSquare):
 def ConfirmMove(StartSquare, FinishSquare):
   StartSquare = str(StartSquare)
   FinishSquare = str(FinishSquare)
-  print(StartSquare)
-  print(FinishSquare)
-  #print("Move from rank {0}, File {1} to Rank {2}, File {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
+  print("Move from rank {0}, File {1} to Rank {2}, File {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
   confirm = input("Confirm move (Yes/No): ")
   return confirm
 
