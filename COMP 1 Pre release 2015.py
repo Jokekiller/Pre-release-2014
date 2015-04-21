@@ -77,33 +77,38 @@ def PlayGame(SampleGame):
       MoveIsLegal = False
       while not(MoveIsLegal):
         StartSquare, FinishSquare, ShowOptions = GetMove(StartSquare, FinishSquare)
+        GameQuit = False
         if ShowOptions:
           OptionsMenu()
           OptionsChoice = OptionsSelection()
-          GameOver, GameQuit = MakeOptionSelection(OptionsChoice, WhoseTurn)
-          #Look at notes and refactor bottom part of the Gameover thing if game quit is = to no or yes
+          GameQuit, surrender = MakeOptionSelection(OptionsChoice, WhoseTurn)
+          MoveIsLegal = True
+          GameOver = True
+          PlayAgain = "N"
         elif ShowOptions:
           confirm = ConfirmMove(StartSquare, FinishSquare)
+          GameQuit = True
           if confirm == "No" or confirm == "N" or confirm == "no" or confirm == "n":
             StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
             StartRank = StartSquare % 10
             StartFile = StartSquare // 10
             FinishRank = FinishSquare % 10
             FinishFile = FinishSquare // 10
-            MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-            if not(MoveIsLegal):
-              print("That is not a legal move - please try again")
-      GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-      MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-      if GameOver:
-        DisplayWinner(WhoseTurn)
-      if WhoseTurn == "W":
-        WhoseTurn = "B"
-      else:
-        WhoseTurn = "W"
-    PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
-    if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-      PlayAgain = chr(ord(PlayAgain) - 32)
+          MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          if not(MoveIsLegal):
+            print("That is not a legal move - please try again")
+        if not GameQuit: 
+          GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+          MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+          if GameOver:
+            DisplayWinner(WhoseTurn)
+          if WhoseTurn == "W":
+            WhoseTurn = "B"
+          else:
+            WhoseTurn = "W"   
+        #PlayAgain = "N"
+        if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+            PlayAgain = chr(ord(PlayAgain) - 32)
       
 def OptionsMenu():
     print()
@@ -242,7 +247,7 @@ def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckMarzazPaniMoveIsLegal = False
-  if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1) or (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1):
+  if (abs(FinishFile - StartFile) == 1 or abs(FinishRank - StartRank) == 1):
     CheckMarzazPaniMoveIsLegal = True
   return CheckMarzazPaniMoveIsLegal
 
