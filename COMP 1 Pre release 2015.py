@@ -60,6 +60,28 @@ def MakeSelection(Choice):
     elif Choice == 6:
       pass
 
+##def DisplaySettingsMenu():
+##  print()
+##  print("1. Use Kashshaptu Piece")
+##  print("2. Return to Main Menu")
+##  print()
+  
+##def GetSettingsSelection():
+##  valid = False
+##  while not valid:
+##    try:
+##      choice = int(input("Select an option from the menu: "))
+##      print()
+##      if not choice in range (2):
+##        valid = False
+##        print("Enter a valid number")
+##      else:
+##        valid = True
+##    except ValueError:
+##      print("Enter a valid number")
+##  return choice
+    
+
 def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
@@ -198,7 +220,7 @@ def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, C
         CheckRedumMoveIsLegal = True
       elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
         CheckRedumMoveIsLegal = True
-  elif FinishRank == StartRank + 1 or (StartRank == 2 and FinishRank == StartRank + 2):
+  if FinishRank == StartRank + 1 or (StartRank == 2 and FinishRank == StartRank + 2):
     if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
       CheckRedumMoveIsLegal = True
     elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
@@ -240,30 +262,33 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
   return GisgigirMoveIsLegal
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+##  CheckNabuMoveIsLegal = False
+##  if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
+##    CheckNabuMoveIsLegal = True
+##    count = 0
+##    if (FinishRank > StartRank and FinishFile > StartFile):
+##      while count < ((FinishRank - StartRank) - 1):
+##        count = count + 1
+##        if Board[StartRank + count][StartFile + count] != "  ":
+##          CheckNabuMoveIsLegal = False
+##    if (FinishRank > StartRank and FinishFile < StartFile):
+##      while count < ((FinishRank - StartRank) - 1):
+##        count = count + 1
+##        if Board[StartRank + count][StartFile - count] != "  ":
+##          CheckNabuMoveIsLegal = False
+##    if (FinishRank < StartRank and FinishFile < StartFile):
+##      while count < ((StartRank - FinishRank) - 1):
+##        count = count + 1
+##        if Board[StartRank - count][StartFile - count] != "  ":
+##          CheckNabuMoveIsLegal = False
+##    if (FinishRank < StartRank and FinishFile > StartFile):
+##      while count < ((StartRank - FinishRank) - 1):
+##        count = count + 1
+##        if Board[StartRank - count][StartFile + count] != "  ":
+##          CheckNabuMoveIsLegal = False
   CheckNabuMoveIsLegal = False
-  if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
+  if abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1:
     CheckNabuMoveIsLegal = True
-    count = 0
-    if (FinishRank > StartRank and FinishFile > StartFile):
-      while count < ((FinishRank - StartRank) - 1):
-        count = count + 1
-        if Board[StartRank + count][StartFile + count] != "  ":
-          CheckNabuMoveIsLegal = False
-    elif (FinishRank > StartRank and FinishFile < StartFile):
-      while count < ((FinishRank - StartRank) - 1):
-        count = count + 1
-        if Board[StartRank + count][StartFile - count] != "  ":
-          CheckNabuMoveIsLegal = False
-    elif (FinishRank < StartRank and FinishFile < StartFile):
-      while count < ((StartRank - FinishRank) - 1):
-        count = count + 1
-        if Board[StartRank - count][StartFile - count] != "  ":
-          CheckNabuMoveIsLegal = False
-    elif (FinishRank < StartRank and FinishFile > StartFile):
-      while count < ((StartRank - FinishRank) - 1):
-        count = count + 1
-        if Board[StartRank - count][StartFile + count] != "  ":
-          CheckNabuMoveIsLegal = False
   return CheckNabuMoveIsLegal
 
 def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
@@ -337,9 +362,15 @@ def InitialiseNewBoard(Board):
         elif FileNo == 3 or FileNo == 6:
           Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
         elif FileNo == 4:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+          if RankNo == 1:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+          if RankNo == 8:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
         elif FileNo == 5:
-          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+          if RankNo == 1:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+          if RankNo == 8:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
       else:
         Board[RankNo][FileNo] = "  "
 
@@ -387,7 +418,7 @@ def GetMove(StartSquare, FinishSquare):
 def ConfirmMove(StartSquare, FinishSquare):
   StartSquare = str(StartSquare)
   FinishSquare = str(FinishSquare)
-  print("Move from rank {0}, File {1} to Rank {2}, File {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
+  print("Move from File {0}, Rank {1} to File {2}, Rank {3}".format(StartSquare[0], StartSquare[1], FinishSquare[0], FinishSquare[1]))
   confirm = input("Confirm move (Yes/No): ")
   return confirm
 
