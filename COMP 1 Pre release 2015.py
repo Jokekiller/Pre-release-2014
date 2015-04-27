@@ -6,6 +6,7 @@
 import pickle
 BOARDDIMENSION = 8
 KashshaptuEnabled = False
+scores = []
 
 def CreateBoard():
   Board = []
@@ -55,7 +56,7 @@ def MakeSelection(Choice):
     elif Choice == 3:
       PlayGame('Y')
     elif Choice == 4:
-      pass
+      DisplayHighScores(scores)
     elif Choice == 5:
       DisplaySettingsMenu()
       choice = GetSettingsSelection()
@@ -96,9 +97,22 @@ def MakeSettingsSelection(choice):
   elif choice == 2:
     pass
     
+def DisplayHighScores(scores):
+  if scores == []:
+    print("There a no high scores")
+  else:
+    print("High Score")
+    print()
+    print("-"*50)
+    print("|Name   |Colour|Number of Moves|Date|")
+    print("-"*50)
+    for name, colour, moves, date in scores:
+      print("|{0:^5}|{1:^5}|{2:^5}|{3:^5}|".format(name, colour, moves, date))
+      print("-"*50)
 
 def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
+  count = 1
   StartSquare = 0 
   FinishSquare = 0
   PlayAgain = "Y"
@@ -137,8 +151,9 @@ def PlayGame(SampleGame):
           elif not GameQuit and not surrender:
             GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
             MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+            count = count + 1
             if GameOver:
-              DisplayWinner(WhoseTurn)
+              DisplayWinner(WhoseTurn, count)
             if WhoseTurn == "W":
               WhoseTurn = "B"
             else:
@@ -201,11 +216,11 @@ def GetTypeOfGame():
             print("Enter a valid choice (y or n)")
     return TypeOfGame
 
-def DisplayWinner(WhoseTurn):
+def DisplayWinner(WhoseTurn, count):
   if WhoseTurn == "W":
-    print("Black's Sarrum has been captured.  White wins!")
+    print("Black's Sarrum has been captured in {0} moves.  White wins!".format(int(count + 1) /2))
   else:
-    print("White's Sarrum has been captured.  Black wins!")
+    print("White's Sarrum has been captured in {0} moves.  Black wins!".format(int(count /2)))
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
   if Board[FinishRank][FinishFile][1] == "S":
@@ -499,7 +514,7 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
       print("{0} {1} takes {2} {3} ".format(StartColour, StartName, FinishColour, FinishName))
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
-    
+ 
 if __name__ == "__main__":
   QuitGame = False
   while not QuitGame:
@@ -508,4 +523,3 @@ if __name__ == "__main__":
     Choice = MakeSelection(Choice)
     if Choice == 1 or Choice == 3:
       PlayGame(SampleGame)
-  
