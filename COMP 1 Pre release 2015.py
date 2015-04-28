@@ -4,9 +4,17 @@
 # developed in the Python 3.4 programming environment
 
 import pickle
+from datetime import *
 BOARDDIMENSION = 8
 KashshaptuEnabled = False
 scores = []
+
+class score():
+  def __init__(self):
+    self.name = None
+    self.colour = None
+    self.moves = None
+    self.date = None
 
 def CreateBoard():
   Board = []
@@ -107,12 +115,25 @@ def DisplayHighScores(scores):
     print("|Name   |Colour|Number of Moves|Date|")
     print("-"*50)
     for name, colour, moves, date in scores:
-      print("|{0:^5}|{1:^5}|{2:^5}|{3:^5}|".format(name, colour, moves, date))
+      print("|{0:^5}|{1:^5}|{2:^5}|{3:^5}|".format(aScore.name, aScore.colour, aScore.moves, aScore.date))
       print("-"*50)
+
+def GettingHighScore(WhoseTurn, count):
+  print()
+  HighScoreChoice = input("Do you want to add your name to the high score(y/n): ")
+  if HighScoreChoice in ["y","Y","yes", "Yes"]:
+    aScore = score()
+    aScore.name = input("Enter your name: ")
+    aScore.colour = WhoseTurn
+    aScore.moves = count
+    aScore.date = datetime.now()
+  elif HighScoreChoice in ["N","n", "No", "no"]:
+    aScore = None
+  return aScore
 
 def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
-  count = 1
+  count = 0
   StartSquare = 0 
   FinishSquare = 0
   PlayAgain = "Y"
@@ -154,6 +175,7 @@ def PlayGame(SampleGame):
             count = count + 1
             if GameOver:
               DisplayWinner(WhoseTurn, count)
+              GettingHighScore(WhoseTurn, count)
             if WhoseTurn == "W":
               WhoseTurn = "B"
             else:
@@ -219,8 +241,10 @@ def GetTypeOfGame():
 def DisplayWinner(WhoseTurn, count):
   if WhoseTurn == "W":
     print("Black's Sarrum has been captured in {0} moves.  White wins!".format(int(count + 1) /2))
+    print("Well done {0}".format(WhoseTurn))
   else:
     print("White's Sarrum has been captured in {0} moves.  Black wins!".format(int(count /2)))
+    print("Well done {0}".format(WhoseTurn))
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
   if Board[FinishRank][FinishFile][1] == "S":
