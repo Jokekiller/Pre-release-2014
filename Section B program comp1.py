@@ -2,10 +2,11 @@
 #29/04/2015
 #Section B program
 
+ISBN = [13]
 
-
-for count in (1,13:
-  ISBN[count] = int(input("PLease enter the next digit of ISBN: "))
+for count in range (13):
+    count = int(input("PLease enter the next digit of ISBN: "))
+    ISBN.append(count)
 calculatedDigit = 0
 count = 1
 while count < 13:
