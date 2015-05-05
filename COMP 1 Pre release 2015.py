@@ -131,6 +131,11 @@ def GettingHighScore(WhoseTurn, count):
     aScore = None
   return aScore
 
+def SaveHighScores(scores):
+  with open("SarrumGame.txt", mode = "w", encoding = "utf-8") as SarrumGame:
+    for scores in SarrumGame:
+      print(scores)
+
 def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
   count = 0
@@ -180,9 +185,9 @@ def PlayGame(SampleGame):
               WhoseTurn = "B"
             else:
               WhoseTurn = "W"   
-        #PlayAgain = "N"
-        if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
-          PlayAgain = chr(ord(PlayAgain) - 32)
+    PlayAgain = input("Do you want ot play again(y/n): ")
+    if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+      PlayAgain = chr(ord(PlayAgain) - 32)
       
 def OptionsMenu():
     print()
@@ -209,8 +214,6 @@ def MakeOptionSelection(OptionChoice, WhoseTurn):
   GameQuit = False
   if OptionChoice == 1:
      pass
-     #with open("SarrumGame.dat", mode= "rb") as binary_file:
-     # pickle.dump(Board, binary_file)
   elif OptionChoice == 2:
     GameOver = True
     GameQuit = True
