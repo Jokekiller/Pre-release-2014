@@ -132,10 +132,9 @@ def GettingHighScore(WhoseTurn, count):
   return aScore
 
 def SaveHighScores(scores):
-  with open("SarrumGame.txt", mode = "w", encoding = "utf-8") as SarrumGame:
-    for scores in SarrumGame:
-      print(scores)
-
+  with open("SarrumGame.txt", mode = "wb") as SarrumGame:
+    pickle.dump(scores, SarrumGame)
+  
 def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
   count = 0
