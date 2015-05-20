@@ -45,14 +45,14 @@ def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
 def DisplayBoard(Board):
   print()
   for RankNo in range(1, BOARDDIMENSION + 1):
-    print("     _______________________")
-    print(RankNo, end="   ")
+    print("     -------------------------")
+    print("R{0}".format(RankNo), end="   ")
     for FileNo in range(1, BOARDDIMENSION + 1):
       print("|" + Board[RankNo][FileNo], end="")
     print("|")
-  print("     _______________________")
+  print("     -------------------------")
   print()
-  print("      1  2  3  4  5  6  7  8")
+  print("      F1 F2 F3 F4 F5 F6 F7 F8")
   print()
   print()    
 
@@ -165,19 +165,12 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
 
 def InitialiseBoard(Board, SampleGame):
   if SampleGame == "Y":
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):
-        Board[RankNo][FileNo] = "  "
-    Board[1][2] = "BG"
-    Board[1][4] = "BS"
-    Board[1][8] = "WG"
-    Board[2][1] = "WR"
-    Board[3][1] = "WS"
-    Board[3][2] = "BE"
-    Board[3][8] = "BE"
-    Board[6][8] = "BR"
+    InitialiseSampleBoard(Board)
   else:
-    for RankNo in range(1, BOARDDIMENSION + 1):
+    InitialiseNewBoard(Board)
+
+def InitialiseNewBoard(Board):
+  for RankNo in range(1, BOARDDIMENSION + 1):
       for FileNo in range(1, BOARDDIMENSION + 1):
         if RankNo == 2:
           Board[RankNo][FileNo] = "BR"
@@ -199,38 +192,65 @@ def InitialiseBoard(Board, SampleGame):
           elif FileNo == 5:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
         else:
-          Board[RankNo][FileNo] = "  "    
-                    
+          Board[RankNo][FileNo] = "  "
+
+def InitialiseSampleBoard(Board):
+    for RankNo in range(1, BOARDDIMENSION + 1):
+      for FileNo in range(1, BOARDDIMENSION + 1):
+        Board[RankNo][FileNo] = "  "
+    Board[1][2] = "BG"
+    Board[1][4] = "BS"
+    Board[1][8] = "WG"
+    Board[2][1] = "WR"
+    Board[3][1] = "WS"
+    Board[3][2] = "BE"
+    Board[3][8] = "BE"
+    Board[6][8] = "BR"
+                   
 def GetMove(StartSquare, FinishSquare):
     valid = False
+    ShowOptions = False
     while not valid:
         try:
-            StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
-            if StartSquare // 10 > 0:
-                valid = True
+            StartSquare = int(input("Enter coordinates of square containing piece to move (file first) or enter -1 to get to the options menu: "))
+            if StartSquare == -1:
+              valid = True
+              ShowOptions = True
             else:
-                print("Please enter both FILE and RANK")
+              if StartSquare // 10 > 0:
+                  valid = True
+                  ShowOptions = False
+              else:
+                  print("Please enter both FILE and RANK")
         except ValueError:
             print("Please enter both FILE and RANK")
     valid = False
-    while not valid:
+    while not valid and not ShowOptions:
         try:
-            FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
-            if StartSquare // 10 > 0:
-                valid = True
+            FinishSquare = int(input("Enter coordinates of square to move piece to (file first) or enter -1 to get to the options menu: "))
+            if FinishSquare == -1:
+              valid = True
+              ShowOptions =  True
             else:
-                print("Please enter both FILE and RANK")
+              if StartSquare // 10 > 0:
+                  valid = True
+              else:
+                  print("Please enter both FILE and RANK")
         except ValueError:
             print("Please enter both FILE and RANK")
-    return StartSquare, FinishSquare
+    return StartSquare, FinishSquare, ShowOptions
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     Board[FinishRank][FinishFile] = "WM"
     Board[StartRank][StartFile] = "  "
+    print()
+    print("White Redum promoted to Marzaz Pani")
   elif WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
     Board[FinishRank][FinishFile] = "BM"
     Board[StartRank][StartFile] = "  "
+    print()
+    print("Black Redum promoted to Marzaz Pani")
   else:
     if Board[FinishRank][FinishFile] != "  ":
         print()
@@ -282,24 +302,76 @@ def GetPieceName(PieceCode):
         piece = "Redumn"
     return colour, piece
 
-if __name__ == "__main__":
+def DisplayMenu():
+  print()
+  print("Main Menu")
+  print()
+  print("1. Start new game")
+  print("2. Load existing game")
+  print("3. Play sample game")
+  print("4. View high scores")
+  print("5. Settings")
+  print("6. Quit program")
+  print()
+
+def GetMenuSelection():
+  valid = False
+  while not valid:
+    try:
+      choice = int(input("Please select an option: "))
+      print()
+      if choice in range(6):
+        valid = True
+      else:
+        valid = False
+        print("Enter a valid number")
+    except ValueError:
+      print("Enter a valid number")
+  return choice
+
+def MakeSelection(choice):
+  if choice == 1:
+    PlayGame("N")
+  elif choice == 2:
+    pass
+  elif choice == 3:
+    PlayGame("Y")
+  elif choice == 4:
+    pass
+  elif choice == 5:
+    pass
+  elif choice == 6:
+    pass
+
+def PlayGame(SampleGame):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
+  ShowOptions = False
+  surrender = False
   PlayAgain = "Y"
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
-    SampleGame = GetTypeOfGame()
     InitialiseBoard(Board, SampleGame)
     while not(GameOver):
       DisplayBoard(Board)
       DisplayWhoseTurnItIs(WhoseTurn)
       MoveIsLegal = False
       while not(MoveIsLegal):
-        StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-        Confirm = ConfirmMove(StartSquare, FinishSquare)
-        if Confirm:
+        StartSquare, FinishSquare, ShowOtions = GetMove(StartSquare, FinishSquare)
+        if StartSquare == -1 or FinishSquare == -1:
+          ShowOptions = True
+        else:
+          Confirm = ConfirmMove(StartSquare, FinishSquare)
+        if ShowOptions:
+          OptionsMenu()
+          OptionsChoice = OptionsSelection()
+          surrender, GameQuit = MakeOptionsSelection(OptionsChoice, WhoseTurn)
+          MoveIsLegal = True
+          GameOver = True
+          PlayAgain = "N"
+        elif not ShowOptions:
             StartRank = StartSquare % 10
             StartFile = StartSquare // 10
             FinishRank = FinishSquare % 10
@@ -318,3 +390,58 @@ if __name__ == "__main__":
     PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
     if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
         PlayAgain = chr(ord(PlayAgain) - 32)
+
+def OptionsMenu():
+  print()
+  print("Options")
+  print()
+  print("1. Save game")
+  print("2. Quit to Menu")
+  print("3. Return to game")
+  print("4. Surrender")
+  print()
+
+def OptionsSelection():
+  valid = False
+  while not valid:
+    try:
+      OptionsChoice = int(input("Please select an option: "))
+      if OptionsChoice in [1,2,3,4]:
+        valid = True
+      else:
+        valid = False
+        print("Enter a valid option")
+    except ValueError:
+      valid = False
+      print("Enter a valid option")
+  return OptionsChoice
+
+def MakeOptionsSelection(OptionsChoice, WhoseTurn):
+  surrender = False
+  GameQuit = False
+  if OptionsChoice == 1:
+    pass
+  elif OptionsChoice == 2:
+    GameOver = True
+    GameQuit = True
+  elif OptionsChoice == 3:
+    pass
+  elif OptionsChoice == 4:
+    surrender = True
+    print()
+    print("Surrendering . . .")
+    print()
+    if WhoseTurn == "W":
+      print("White surrendered, Black wins")
+    elif WhoseTurn == "B":
+      print("Black surrendered, White wins")
+  return surrender, GameQuit
+
+if __name__ == "__main__":
+  QuitGame = False
+  while not QuitGame:
+    DisplayMenu()
+    choice = GetMenuSelection()
+    choice = MakeSelection(choice)
+    if choice == 1 or choice == 3:
+      PlayGame(SampleGame)
