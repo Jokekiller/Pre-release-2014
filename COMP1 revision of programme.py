@@ -4,6 +4,15 @@
 # developed in the Python 3.4 programming environment
 
 BOARDDIMENSION = 8
+KashshaptuEnabled = False
+from datetime import *
+
+class score():
+  def __init__(self):
+    self.name = None
+    self.colour = None
+    self.moves = None
+    self.date = None
 
 def CreateBoard():
   Board = []
@@ -30,11 +39,15 @@ def GetTypeOfGame():
             print("Enter a value that is valid")
     return TypeOfGame
 
-def DisplayWinner(WhoseTurn):
+def DisplayWinner(WhoseTurn, count):
   if WhoseTurn == "W":
-    print("Black's Sarrum has been captured.  White wins!")
+    print("Black's Sarrum has been captured in {0}.  White wins!".format(int(count + 1)/ 2))
+    print()
+    print("Well done White!")
   else:
-    print("White's Sarrum has been captured.  Black wins!")
+    print("White's Sarrum has been captured in {0}.  Black wins!".format(int(count/ 2)))
+    print()
+    print("Well done Black")
 
 def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
   if Board[FinishRank][FinishFile][1] == "S":
@@ -59,12 +72,12 @@ def DisplayBoard(Board):
 def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece):
   CheckRedumMoveIsLegal = False
   if ColourOfPiece == "W":
-    if FinishRank == StartRank - 1:
+    if FinishRank == StartRank - 1 or (StartRank == 7 and FinishRank == StartRank - 2):
       if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
         CheckRedumMoveIsLegal = True
       elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
         CheckRedumMoveIsLegal = True
-  elif FinishRank == StartRank + 1:
+  elif FinishRank == StartRank + 1 or (StartRank == 2 and FinishRank == StartRank + 2):
     if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
       CheckRedumMoveIsLegal = True
     elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
@@ -107,7 +120,7 @@ def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile
 
 def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckNabuMoveIsLegal = False
-  if abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1:
+  if abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
     CheckNabuMoveIsLegal = True
   return CheckNabuMoveIsLegal
 
@@ -115,13 +128,33 @@ def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFi
   CheckMarzazPaniMoveIsLegal = False
   if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1):
     CheckMarzazPaniMoveIsLegal = True
+  elif (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) == 0):
+    CheckMarzazPaniMoveIsLegal = True
   return CheckMarzazPaniMoveIsLegal
 
 def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
   CheckEtluMoveIsLegal = False
-  if (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) == 2):
+  if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2) or (abs(FinishFile - StartFile) == 2 and abs(FinishRank- StartRank) == 1):
+    #All compass point directions
     CheckEtluMoveIsLegal = True
   return CheckEtluMoveIsLegal
+
+def CheckKashshaptuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  CheckKashshaptuMoveIsLegal = False
+  if abs(FinishFile - StartFile) <= 1 and abs(FinishRank - StartRank) <= 1:
+    CheckSarrumMoveIsLegal = False
+  else:
+    RankDifference = FinishRank - StartRank
+    FileDifference = FinishFile - StartFile
+    if RankDifference == 0 or FileDifference == 0:
+      CheckKashshaptuMoveIsLegal = True
+      #Moving like a Gisisgir
+    elif abs(FinishFile - StartFile) == abs(FinishRank - StartRank):
+      CheckKashshaptuMoveIsLegal = True
+      #Moving like a Nabu
+    elif (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2) or (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 1):
+      CheckKashshaptuMoveIsLegal = True
+  return CheckKashshaptuMoveIsLegal
 
 def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     MoveIsLegal = True
@@ -161,7 +194,9 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
             MoveIsLegal = CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
           elif PieceType == "E":
             MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
-    return MoveIsLegal
+          elif PieceType == "K":
+            MoveIsLegal = CheckKashshaptuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile) 
+    return MoveIsLegal 
 
 def InitialiseBoard(Board, SampleGame):
   if SampleGame == "Y":
@@ -188,9 +223,15 @@ def InitialiseNewBoard(Board):
           elif FileNo == 3 or FileNo == 6:
             Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
           elif FileNo == 4:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+            if RankNo == 1:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+            if RankNo == 8:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
           elif FileNo == 5:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+            if RankNo == 1:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+            if RankNo == 8:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
         else:
           Board[RankNo][FileNo] = "  "
 
@@ -241,7 +282,17 @@ def GetMove(StartSquare, FinishSquare):
     return StartSquare, FinishSquare, ShowOptions
 
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
-  if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
+  if KashshaptuEnabled and WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
+    Board[FinishRank][FinishFile] = "WK"
+    Board[StartRank][StartFile] = "  "
+    print()
+    print("White Redum promoted to Kashshaptu")
+  elif KashshaptuEnabled and WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
+    Board[FinishRank][FinishFile] = "BK"
+    Board[StartRank][StartFile] = "  "
+    print()
+    print("Black Redum promoted to Kashshaptu")
+  elif WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
     Board[FinishRank][FinishFile] = "WM"
     Board[StartRank][StartFile] = "  "
     print()
@@ -300,6 +351,8 @@ def GetPieceName(PieceCode):
         piece = "Gisgigir"
     elif piece == "R":
         piece = "Redumn"
+    elif piece == "K":
+      piece = "Kashshaptu"
     return colour, piece
 
 def DisplayMenu():
@@ -331,25 +384,28 @@ def GetMenuSelection():
 
 def MakeSelection(choice):
   if choice == 1:
-    PlayGame("N")
+    PlayGame("N", scores)
   elif choice == 2:
     pass
   elif choice == 3:
-    PlayGame("Y")
+    PlayGame("Y",scores)
   elif choice == 4:
-    pass
+    DisplayHighScores(scores)
   elif choice == 5:
-    pass
+    SettingMenu()
+    choice = GetSettingSelection()
+    MakeSettingsSelection(choice)
   elif choice == 6:
     pass
 
-def PlayGame(SampleGame):
+def PlayGame(SampleGame, scores):
   Board = CreateBoard() #0th index not used
   StartSquare = 0 
   FinishSquare = 0
   ShowOptions = False
   surrender = False
   PlayAgain = "Y"
+  count = 0
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
@@ -360,6 +416,7 @@ def PlayGame(SampleGame):
       MoveIsLegal = False
       while not(MoveIsLegal):
         StartSquare, FinishSquare, ShowOtions = GetMove(StartSquare, FinishSquare)
+        GameQuit = False
         if StartSquare == -1 or FinishSquare == -1:
           ShowOptions = True
         else:
@@ -379,14 +436,17 @@ def PlayGame(SampleGame):
             MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
             if not(MoveIsLegal):
               print("That is not a legal move - please try again")
-            GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-            MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-            if GameOver:
-                DisplayWinner(WhoseTurn)
-            if WhoseTurn == "W":
-                WhoseTurn = "B"
-            else:
-                WhoseTurn = "W"
+            elif not GameQuit and not surrender:
+              GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+              MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+              count = count + 1
+              if GameOver:
+                  DisplayWinner(WhoseTurn, count)
+                  GetHighScore(WhoseTurn, count, scores)
+              if WhoseTurn == "W":
+                  WhoseTurn = "B"
+              else:
+                  WhoseTurn = "W"
     PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
     if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
         PlayAgain = chr(ord(PlayAgain) - 32)
@@ -437,11 +497,84 @@ def MakeOptionsSelection(OptionsChoice, WhoseTurn):
       print("Black surrendered, White wins")
   return surrender, GameQuit
 
+def SettingMenu():
+  print()
+  print("1. Use Kashshaptu Piece")
+  print("2. Return to Main Menu")
+  print()
+
+def GetSettingSelection():
+  valid = False
+  while not valid:
+    try:
+      choice = int(input("Please select an option: "))
+      if choice in [1,2]:
+        valid = True
+      else:
+        valid = False
+        print("Enter a valid number")
+    except ValueError:
+      print("Enter a valid number")
+  return choice
+
+def MakeSettingsSelection(choice):
+  GameQuit = False
+  if choice == 1:
+    valid = False
+    while not valid:
+      confirm = input("Do you want to use Kshshaptu piece?: ")
+      confirm = confirm.upper()[0]
+      if confirm in ["Y","N"]:
+        valid = True
+        if confirm == "Y":
+          global KashshaptuEnabled
+          KashshaptuEnabled = True
+          print()
+          print("Kashshaptu activated")
+        else:
+          global KashshaptuEnabled
+          KashshaptuEnabled = False
+      else:
+        print("Enter a valid option")
+  elif choice == 2:
+    GameQuit = True
+    GameOver = True
+
+def DisplayHighScores(scores):
+  print(scores)
+  if scores == []:
+    print("There are no high scores")
+  else:
+    print("High Scores")
+    print()
+    print("-"*46)
+    print("|Name      |Colour|Number of Moves|Date      |")
+    print("-"*46)
+    for aScore in scores:
+      print("|{0:^10}|{1:^6}|{2:^15}|{3:^10}|".format(aScore.name, aScore.colour, aScore.moves, aScore.date))
+      print("-"*46)
+
+def GetHighScore(WhoseTurn, count, scores):
+  print()
+  choice = input("Do you want to add your name to the high scores?: ")
+  choice = choice.upper()[0]
+  if choice == "Y":
+    aScore = score()
+    aScore.name = input("Enter your name: ")
+    aScore.colour = WhoseTurn
+    aScore. moves = count
+    aScore.date = datetime.strftime(datetime.now(),"%d/%m/%Y")
+    scores.append(aScore)
+  elif choice == "N":
+    aScore = None
+  return aScore
+
 if __name__ == "__main__":
+  scores = []
   QuitGame = False
   while not QuitGame:
     DisplayMenu()
     choice = GetMenuSelection()
     choice = MakeSelection(choice)
     if choice == 1 or choice == 3:
-      PlayGame(SampleGame)
+      PlayGame(SampleGame, scores)
