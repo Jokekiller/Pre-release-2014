@@ -6,6 +6,7 @@
 BOARDDIMENSION = 8
 KashshaptuEnabled = False
 from datetime import *
+import pickle
 
 class score():
   def __init__(self):
@@ -373,7 +374,7 @@ def GetMenuSelection():
     try:
       choice = int(input("Please select an option: "))
       print()
-      if choice in range(6):
+      if choice in [1,2,3,4,5,6]:
         valid = True
       else:
         valid = False
@@ -382,7 +383,8 @@ def GetMenuSelection():
       print("Enter a valid number")
   return choice
 
-def MakeSelection(choice):
+def MakeSelection(choice, scores):
+  QuitGame = False
   if choice == 1:
     PlayGame("N", scores)
   elif choice == 2:
@@ -396,7 +398,9 @@ def MakeSelection(choice):
     choice = GetSettingSelection()
     MakeSettingsSelection(choice)
   elif choice == 6:
-    pass
+    SaveHighScores(scores)
+    QuitGame = True
+  return choice
 
 def PlayGame(SampleGame, scores):
   Board = CreateBoard() #0th index not used
@@ -541,7 +545,6 @@ def MakeSettingsSelection(choice):
     GameOver = True
 
 def DisplayHighScores(scores):
-  print(scores)
   if scores == []:
     print("There are no high scores")
   else:
@@ -562,19 +565,29 @@ def GetHighScore(WhoseTurn, count, scores):
     aScore = score()
     aScore.name = input("Enter your name: ")
     aScore.colour = WhoseTurn
-    aScore. moves = count
+    aScore.moves = count
     aScore.date = datetime.strftime(datetime.now(),"%d/%m/%Y")
     scores.append(aScore)
   elif choice == "N":
     aScore = None
   return aScore
 
+def SaveHighScores(scores):
+  with open("SarrumScores.dat", mode = "wb") as binary_file:
+    pickle.dump(scores, binary_file)
+
+def LoadHighScores(scores):
+  with open("SarrumScores.dat", mode = "rb") as binary_file:
+    scores = pickle.load(binary_file)
+  return scores
+  
 if __name__ == "__main__":
   scores = []
   QuitGame = False
   while not QuitGame:
+    scores = LoadHighScores(scores)
     DisplayMenu()
     choice = GetMenuSelection()
-    choice = MakeSelection(choice)
-    if choice == 1 or choice == 3:
-      PlayGame(SampleGame, scores)
+    choice = MakeSelection(choice, scores)
+    if choice == 6:
+      QuitGame = True
